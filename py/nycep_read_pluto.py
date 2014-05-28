@@ -1,7 +1,6 @@
 import os, sys
 import numpy as np
 import matplotlib.pyplot as plt
-import pickle as pkl
 
 # -- set the burrough
 bur = 'MN'
@@ -9,7 +8,7 @@ bur = 'MN'
 
 # -- get the input data file
 print("Reading the data for {0}...".format(bur))
-dpath = '../data'
+dpath = '../data/pluto'
 dfile = os.path.join(dpath,bur+'.csv')
 lines = [line for line in open(dfile,'r')]
 
