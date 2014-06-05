@@ -1,0 +1,48 @@
+import os
+
+# -------- 
+#  List the tables in the ACS data
+#
+#  2014/05/06 - Written by Greg Dobler (CUSP/NYU)
+# -------- 
+def nycep_acs_list_tables(year=2012, summary=1, dpath=None):
+    """ List the tables in ACS data """
+
+    # -- utilities
+    if dpath==None:
+        print("Must set data path to ACS data!")
+        return
+    path  = os.path.join(dpath,str(year),str(summary))
+    sname = 'Sequence_Number_and_Table_Number_Lookup.txt'
+
+
+    # -- read in the sequence #, table #, and names
+    fopen = open(os.path.join(path,sname),'r')
+    lines = [line for line in fopen if 'CELLS' in line]
+    fopen.close()
+
+
+    # -- pull out the names
+    tnames =  [line.split(',')[-2] if '\"' not in line else 
+               line.split('\"')[1] for line in lines]
+
+
+    # -- write to file
+    ofile = os.path.join('../output/acs',str(year),str(summary), 
+                              'table_names.txt')
+    print("writing table names to {0}".format(ofile))
+
+    fopen = open(ofile,'w')
+    [fopen.write(i+'\n') for i in tnames]
+    fopen.close()
+
+    return
+
+
+if __name__=='__main__':
+
+    year = 2012
+    summary = 1
+    dpath = '../../data/acs'
+
+    nycep_acs_list_tables(dpath=dpath)
