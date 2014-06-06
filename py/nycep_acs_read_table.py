@@ -4,10 +4,13 @@ from nycep_acs_tract_logrecno import *
 # -------- 
 #  Read the data from an ACS table
 #
+#  Example:
+#    data = nycep_acs_read_table('B01001',dpath='../../data/acs',summary=5)
+#
 #  2014/06/06 - Written by Greg Dobler (CUSP/NYU)
 # -------- 
 
-def nycep_acs_read_table(tlabel, year=2012, summary=1, dpath=None, 
+def nycep_acs_read_table(tlabel, year=2012, summary=5, dpath=None, 
                          margins=False):
 
     # -- check path
@@ -41,15 +44,29 @@ def nycep_acs_read_table(tlabel, year=2012, summary=1, dpath=None,
                           eom+str(year)+str(summary)+'ny'+seqnum+'000.txt')
     fopen  = open(dfile,'r')
 
+    data = {'fileid'   : '',
+            'filetype' : '',
+            'stusab'   : '',
+            'chariter' : '',
+            'sequence' : '',
+            'logrecno' : [],
+            'vals'     : []}
+
     if summary==5:
         logrecno = nycep_acs_tract_logrecno(dpath=dpath)
         dlines   = []
         for line in fopen:
             recs = line.split(',')
             if recs[5] in logrecno:
-                dlines.append(recs[cstart:cstart+ncell])
+                data['fileid']   = recs[0]
+                data['filetype'] = recs[1]
+                data['stusab']   = recs[2]
+                data['chariter'] = recs[3]
+                data['sequence'] = recs[4]
+                data['logrecno'].append(recs[5])
+                data['vals'].append(recs[cstart:cstart+ncell])
     elif summary==1:
-        dlines = [line.split(',')[cstart:cstart+ncell] for line in fopen]
+        data = [line.split(',')[cstart:cstart+ncell] for line in fopen]
     else:
         print("Only 1 and 5 year summaries supported!!!")
         return
@@ -57,6 +74,5 @@ def nycep_acs_read_table(tlabel, year=2012, summary=1, dpath=None,
     fopen.close()
 
 
-    return seqnum, cstart, ncell, dlines
-
-seqnum, cstart, ncell, dlines = nycep_acs_read_table('B01001',dpath='../../data/acs',summary=5)
+    # -- return data
+    return data
