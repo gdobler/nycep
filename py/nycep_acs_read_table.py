@@ -35,7 +35,7 @@ def nycep_acs_read_table(tlabel, year=2012, summary=5, dpath=None,
     recs   = slines[[line.split(',')[1] for line in slines].index(tlabel)
                     ].split(',')
     seqnum = recs[2]
-    cstart = int(recs[4])
+    cstart = int(recs[4])-1
     ncell  = int(''.join([i for i in recs[5] if i.isdigit()]))
 
 
