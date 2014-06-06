@@ -3,6 +3,12 @@ import os
 # -------- 
 #  List the tables in the ACS data
 #
+#  Example:
+#    year = 2012
+#    summary = 5
+#    dpath = '../../data/acs'
+#    nycep_acs_list_tables(year=year, summary=summary, dpath=dpath)
+#
 #  2014/05/06 - Written by Greg Dobler (CUSP/NYU)
 # -------- 
 def nycep_acs_list_tables(year=2012, summary=1, dpath=None):
@@ -38,12 +44,3 @@ def nycep_acs_list_tables(year=2012, summary=1, dpath=None):
     fopen.close()
 
     return
-
-
-if __name__=='__main__':
-
-    year = 2012
-    summary = 1
-    dpath = '../../data/acs'
-
-    nycep_acs_list_tables(dpath=dpath)
