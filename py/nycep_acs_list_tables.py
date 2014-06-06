@@ -18,7 +18,7 @@ def nycep_acs_list_tables(year=2012, summary=1, dpath=None):
 
     # -- read in the sequence #, table #, and names
     fopen = open(os.path.join(path,sname),'r')
-    lines = [line for line in fopen if 'CELLS' in line]
+    lines = [line for line in fopen if 'CELL' in line]
     fopen.close()
 
 
