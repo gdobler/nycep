@@ -23,7 +23,8 @@ def nycep_acs_list_tables(year=2012, summary=1, dpath=None):
 
 
     # -- pull out the names
-    tnames =  [line.split(',')[-2] if '\"' not in line else 
+    tlabels = [line.split(',')[1] for line in lines]
+    tnames  = [line.split(',')[-2] if '\"' not in line else 
                line.split('\"')[1] for line in lines]
 
 
@@ -33,7 +34,7 @@ def nycep_acs_list_tables(year=2012, summary=1, dpath=None):
     print("writing table names to {0}".format(ofile))
 
     fopen = open(ofile,'w')
-    [fopen.write(i+'\n') for i in tnames]
+    [fopen.write("{0:10s}".format(i)+j+'\n') for i,j in zip(tlabels,tnames)]
     fopen.close()
 
     return
