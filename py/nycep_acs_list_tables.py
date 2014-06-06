@@ -11,7 +11,7 @@ import os
 #
 #  2014/05/06 - Written by Greg Dobler (CUSP/NYU)
 # -------- 
-def nycep_acs_list_tables(year=2012, summary=1, dpath=None):
+def nycep_acs_list_tables(year=2012, summary=5, dpath=None):
     """ List the tables in ACS data """
 
     # -- utilities
@@ -34,13 +34,23 @@ def nycep_acs_list_tables(year=2012, summary=1, dpath=None):
                line.split('\"')[1] for line in lines]
 
 
-    # -- write to file
+    # -- write to txt file
     ofile = os.path.join('../output/acs',str(year),str(summary), 
                               'table_names.txt')
     print("writing table names to {0}".format(ofile))
 
     fopen = open(ofile,'w')
     [fopen.write("{0:10s}".format(i)+j+'\n') for i,j in zip(tlabels,tnames)]
+    fopen.close()
+
+
+    # -- write to csv file
+    ofile = os.path.join('../output/acs',str(year),str(summary), 
+                              'table_names.csv')
+    print("writing table names to {0}".format(ofile))
+
+    fopen = open(ofile,'w')
+    [fopen.write(i+','+j+'\n') for i,j in zip(tlabels,tnames)]
     fopen.close()
 
     return
