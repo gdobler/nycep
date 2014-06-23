@@ -89,3 +89,8 @@
 --		85 years and over,P0120049
 
 \copy (select block, sum(p0120027), sum(p0120028), sum(p0120029), sum(p0120030), sum(p0120031), sum(p0120032), sum(p0120033), sum(p0120034), sum(p0120035), sum(p0120036), sum(p0120037), sum(p0120038), sum(p0120039), sum(p0120040), sum(p0120041), sum(p0120042), sum(p0120043), sum(p0120044), sum(p0120045), sum(p0120046), sum(p0120047), sum(p0120048), sum(p0120049) from sf1_00004 as s, geo_header_sf1 as g where s.logrecno = g.logrecno and g.sumlev = '101' group by block order by block desc) to 'ageOfFemales.csv' with delimiter ',' csv header;
+
+
+-- TRANSLATE BLOCK NUMBERS TO logrecno
+
+\copy (select block, s.logrecno from sf1_00044 as s, geo_header_sf1 as g where s.logrecno = g.logrecno and g.sumlev = '101' order by block desc) to 'blockToLogrecno.csv' with delimiter ',' csv header;
