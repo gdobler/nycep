@@ -43,6 +43,14 @@ class AcsTable():
         data = nycep_acs_read_table(cls.id,year=year,summary=summary,
                                     dpath=dpath)
 
+
+        # -- handle missing fields
+        data['vals'] = [['-1'] if ((i[0]=='.') or (len(i[0])==0) or 
+                                   (i[0].isspace())) else i for i in 
+                        data['vals']]
+
+
+        # -- fill class attributes
         cls.fileid   = data['fileid']
         cls.filetype = data['filetype']
         cls.stusab   = data['stusab']
