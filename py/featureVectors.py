@@ -9,11 +9,16 @@ def addFeatures(fileName, dictionary):
 		lines.next()
 		for line in lines:
 			length = len(line)
-			block = line[0]
-			if not block in dictionary:
-				dictionary[block] = [line[1:length]]
+			logrecno = line[0]
+			if not logrecno in dictionary:
+				for i in range(1, length):
+					if (i == 1):
+						dictionary[logrecno] = [line[1]]
+					else:
+						dictionary[logrecno].append(line[i])
 			else:
-				dictionary[block].append(line[1:length])
+				for i in range(1, length):
+					dictionary[logrecno].append(line[i])
 
 addFeatures("../output/censusOutput/ageOfFemales.csv", data)
 addFeatures("../output/censusOutput/ageOfMales.csv", data)
@@ -32,19 +37,22 @@ for block in data:
 		nFeats += len2
 	break
 
+print nBlocks, nFeats
+
 featVect = np.zeros(shape = (nBlocks, nFeats))
 
 i = 0
 j = 0
 for block in data:
-	for features in data[block]:
-		for attribute in features:
-			featVect[i][j] = attribute
-			if (j == nFeats):
-				j = 0
-			if (i == nBlocks): 
-				break
+	for feature in data[block]:
+		featVect[i][j] = feature
+		j += 1
+		if (j == nFeats):
+			j = 0
+			i += 1
+
 
 for line in featVect:
 	print line
 	break
+
