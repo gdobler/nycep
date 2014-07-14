@@ -85,6 +85,21 @@ for line in xmlArray:
 		j = 1
 		parkId = True
 
+for entry in parkArray:
+	if (entry[3] == 'Acceptable'):
+		entry[3] = 1.0
+	elif (entry[3] == 'Unacceptable'):
+		entry[3] = 0.0
+	elif (entry[3] == 'Not Rated'):
+		entry[3] = -1
+
+	if (entry[4] == 'Acceptable'):
+		entry[4] = 1.0
+	elif (entry[4] == 'Unacceptable'):
+		entry[4] = 0.0
+	elif (entry[4] == 'Not Rated'):
+		entry[4] = -1	
+
 
 w = open("../data/Parks/ParksCSV.csv", "wb")
 wr = csv.writer(w, delimiter = ",")
