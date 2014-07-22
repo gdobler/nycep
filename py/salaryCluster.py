@@ -71,6 +71,7 @@ for zipCode in ignore:
 	except:
 		continue
 
+# compute salary and create dictionary of values
 sal = {}
 for entry in emp:
 	sal[entry] = []
@@ -104,7 +105,7 @@ for zipCode in osal:
 	i += 1
 
 # taking only 2000-2012:
-gfv = copy.deepcopy(fv[:,6:])
+gfv = copy.deepcopy(fv[:,:])
 gfv = (gfv.T - gfv.mean(1)).T
 gfv = (gfv.T/gfv.std(1)).T
 
@@ -141,6 +142,6 @@ ax5 = fig.add_subplot(326)
 plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
 plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='purple')
 
-text(-7.5, 14, 'Average Salary per Worker\n k = 5', size=16)
+text(-14.5, 14, 'Average Salary per Worker\n k = 5', size=16)
 
 
