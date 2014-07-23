@@ -6,12 +6,11 @@ with open("../output/zbp/zcta.txt") as f:
 	for line in f:
 		zcta.append(int(line))
 
-
 i = 0
 
-w = open("../output/zbp/zbp12totalsCleaned.txt", "wb")
+w = open("../output/zbp/94totals.txt", "wb")
 
-with open("../data/zbp/zbp12totals.txt") as f:
+with open("../data/zbp/zbp94totals.txt") as f:
 	for line in f:
 		if (i == 0):
 			i += 1
