@@ -4,7 +4,7 @@ import collections
 from sklearn.cluster import KMeans
 import geopandas as gp
 import copy
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 # dictionary with zip code as key, list of total employees as value
 emp = {}
@@ -24,33 +24,33 @@ def addYear(fileName, dictionary, ind):
 			else:
 				dictionary[zc].append(float(row[ind]))
 
-addYear("../output/zbp/12totals.txt", emp, 4)
-addYear("../output/zbp/11totals.txt", emp, 4)
-addYear("../output/zbp/10totals.txt", emp, 4)
-addYear("../output/zbp/09totals.txt", emp, 4)
-addYear("../output/zbp/08totals.txt", emp, 4)
-addYear("../output/zbp/07totals.txt", emp, 4)
-addYear("../output/zbp/06totals.txt", emp, 3)
-addYear("../output/zbp/05totals.txt", emp, 3)
-addYear("../output/zbp/04totals.txt", emp, 3)
-addYear("../output/zbp/03totals.txt", emp, 3)
-addYear("../output/zbp/02totals.txt", emp, 3)
-addYear("../output/zbp/01totals.txt", emp, 3)
 addYear("../output/zbp/00totals.txt", emp, 3)
+addYear("../output/zbp/01totals.txt", emp, 3)
+addYear("../output/zbp/02totals.txt", emp, 3)
+addYear("../output/zbp/03totals.txt", emp, 3)
+addYear("../output/zbp/04totals.txt", emp, 3)
+addYear("../output/zbp/05totals.txt", emp, 3)
+addYear("../output/zbp/06totals.txt", emp, 3)
+addYear("../output/zbp/07totals.txt", emp, 4)
+addYear("../output/zbp/08totals.txt", emp, 4)
+addYear("../output/zbp/09totals.txt", emp, 4)
+addYear("../output/zbp/10totals.txt", emp, 4)
+addYear("../output/zbp/11totals.txt", emp, 4)
+addYear("../output/zbp/12totals.txt", emp, 4)
 
-addYear("../output/zbp/12totals.txt", ap, 8)
-addYear("../output/zbp/11totals.txt", ap, 8)
-addYear("../output/zbp/10totals.txt", ap, 8)
-addYear("../output/zbp/09totals.txt", ap, 8)
-addYear("../output/zbp/08totals.txt", ap, 8)
-addYear("../output/zbp/07totals.txt", ap, 8)
-addYear("../output/zbp/06totals.txt", ap, 5)
-addYear("../output/zbp/05totals.txt", ap, 5)
-addYear("../output/zbp/04totals.txt", ap, 5)
-addYear("../output/zbp/03totals.txt", ap, 5)
-addYear("../output/zbp/02totals.txt", ap, 5)
-addYear("../output/zbp/01totals.txt", ap, 5)
 addYear("../output/zbp/00totals.txt", ap, 5)
+addYear("../output/zbp/01totals.txt", ap, 5)
+addYear("../output/zbp/02totals.txt", ap, 5)
+addYear("../output/zbp/03totals.txt", ap, 5)
+addYear("../output/zbp/04totals.txt", ap, 5)
+addYear("../output/zbp/05totals.txt", ap, 5)
+addYear("../output/zbp/06totals.txt", ap, 5)
+addYear("../output/zbp/07totals.txt", ap, 8)
+addYear("../output/zbp/08totals.txt", ap, 8)
+addYear("../output/zbp/09totals.txt", ap, 8)
+addYear("../output/zbp/10totals.txt", ap, 8)
+addYear("../output/zbp/11totals.txt", ap, 8)
+addYear("../output/zbp/12totals.txt", ap, 8)
 
 
 # 5 zip codes with missing entries are removed and ignored
@@ -105,43 +105,96 @@ for zipCode in osal:
 	i += 1
 
 # taking only 2000-2012:
-gfv = copy.deepcopy(fv[:,:])
-gfv = (gfv.T - gfv.mean(1)).T
-gfv = (gfv.T/gfv.std(1)).T
+#gfv = copy.deepcopy(fv[:,:])
+fv = (fv.T - fv.mean(1)).T
+fv = (fv.T/fv.std(1)).T
 
 # generate n=5 clusters
 kmeans = KMeans(init='random', n_clusters=5, n_init=10)
-kmeans.fit(gfv)
+kmeans.fit(fv)
 
 
 # create plots of five classes on one figure:
+xlabels = ['00','02','04','06','08','10','12']
+
 fig = figure()
 
+ax1 = subplot(322)
 ind = 0
-ax1 = fig.add_subplot(322)
-plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
-plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='maroon')
+ax1.set_xticklabels(xlabels)
+ax1.get_yaxis().set_ticks([])
+plot(fv[kmeans.labels_==ind].T,lw=0.5,color='grey')
+plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='red')
+ax1 = subplot(322)
 
+ax2 = subplot(323)
 ind = 1
-ax2 = fig.add_subplot(323)
-plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
-plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='blue')
+ax2.set_xticklabels(xlabels)
+ax2.get_yaxis().set_ticks([])
+plot(fv[kmeans.labels_==ind].T,lw=0.5,color='grey')
+plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='cyan')
+ax2 = subplot(323)
 
+ax3 = subplot(324)
 ind = 2
-ax3 = fig.add_subplot(324)
-plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
+ax3.set_xticklabels(xlabels)
+ax3.get_yaxis().set_ticks([])
+plot(fv[kmeans.labels_==ind].T,lw=0.5,color='grey')
 plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='green')
+ax3 = subplot(324)
 
+ax4 = subplot(325)
 ind = 3
-ax4 = fig.add_subplot(325)
-plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
+ax4.set_xticklabels(xlabels)
+ax4.get_yaxis().set_ticks([])
+plot(fv[kmeans.labels_==ind].T,lw=0.5,color='grey')
 plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='orange')
+ax4 = subplot(325)
 
+ax5 = subplot(326)
 ind = 4
-ax5 = fig.add_subplot(326)
-plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
-plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='purple')
+ax5.set_xticklabels(xlabels)
+ax5.get_yaxis().set_ticks([])
+plot(fv[kmeans.labels_==ind].T,lw=0.5,color='grey')
+plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='#4B088A')
+ax5 = subplot(326)
 
-text(-14.5, 14, 'Average Salary per Worker\n k = 5', size=16)
+text(-14.5, 11, 'Average Salary Per Worker\n k = 5', size=16)
+
+
+# save plot to pdf:
+from matplotlib.backends.backend_pdf import PdfPages
+pp = PdfPages('salaryK5.pdf')
+plt.savefig(pp, format='pdf')
+pp.close()
+
+
+gdf = gp.GeoDataFrame.from_file('../data/nyc_zipcta/nyc_zipcta.shp')
+
+# dictionary of cluster labels for each zip code
+labels = {}
+for i in range(0, len(zcta)):
+	labels[zcta[i]] = kmeans.labels_[i]
+
+# add "clusterLabels" to existing gdf
+labelList = []
+zipList = []
+for i in range(0, len(gdf)):
+#	geozip = int(gdf.loc[i].ZIP)
+	geozip = int(gdf.loc[i].ZCTA5CE00)
+	try:
+		labelList.append(labels[geozip])
+		zipList.append(geozip)
+	except:
+		labelList.append(-1)
+		zipList.append(geozip)
+
+gdf['clusterLabel'] = labelList
+
+#figure()
+#gdf.plot(column='clusterLabel', colormap='Accent')
+
+# save gdf to shapefile for qgis
+gdf.to_file('../output/clusterPlots/shapefiles/salaryK5.shp')
 
 
