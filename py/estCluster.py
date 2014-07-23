@@ -21,19 +21,19 @@ def addYear(fileName, dictionary, ind):
 			else:
 				dictionary[zc].append(float(row[ind]))
 
-addYear("../output/zbp/12totals.txt", est, 9)
-addYear("../output/zbp/11totals.txt", est, 9)
-addYear("../output/zbp/10totals.txt", est, 9)
-addYear("../output/zbp/09totals.txt", est, 9)
-addYear("../output/zbp/08totals.txt", est, 9)
-addYear("../output/zbp/07totals.txt", est, 9)
-addYear("../output/zbp/06totals.txt", est, 6)
-addYear("../output/zbp/05totals.txt", est, 6)
-addYear("../output/zbp/04totals.txt", est, 6)
-addYear("../output/zbp/03totals.txt", est, 6)
-addYear("../output/zbp/02totals.txt", est, 6)
-addYear("../output/zbp/01totals.txt", est, 6)
 addYear("../output/zbp/00totals.txt", est, 6)
+addYear("../output/zbp/01totals.txt", est, 6)
+addYear("../output/zbp/02totals.txt", est, 6)
+addYear("../output/zbp/03totals.txt", est, 6)
+addYear("../output/zbp/04totals.txt", est, 6)
+addYear("../output/zbp/05totals.txt", est, 6)
+addYear("../output/zbp/06totals.txt", est, 6)
+addYear("../output/zbp/07totals.txt", est, 9)
+addYear("../output/zbp/08totals.txt", est, 9)
+addYear("../output/zbp/09totals.txt", est, 9)
+addYear("../output/zbp/10totals.txt", est, 9)
+addYear("../output/zbp/11totals.txt", est, 9)
+addYear("../output/zbp/12totals.txt", est, 9)
 
 
 # 5 zip codes with missing entries are removed and ignored
@@ -67,14 +67,14 @@ for zipCode in oest:
 		fv[i][j] = est[zipCode][j]
 	i += 1
 
-# taking only 2000-2012:
-gfv = copy.deepcopy(fv[:,:])
-gfv = (gfv.T - gfv.mean(1)).T
-gfv = (gfv.T/gfv.std(1)).T
+# normalize feature vector
+fv = copy.deepcopy(fv[:,:])
+fv = (fv.T - fv.mean(1)).T
+fv = (fv.T/fv.std(1)).T
 
 # generate n=5 clusters
 kmeans = KMeans(init='random', n_clusters=5, n_init=10)
-kmeans.fit(gfv)
+kmeans.fit(fv)
 
 
 # create plots of five classes on one figure:
@@ -82,29 +82,62 @@ fig = figure()
 
 ind = 0
 ax1 = fig.add_subplot(322)
-plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
+plot(fv[kmeans.labels_==ind].T,lw=0.5,color='grey')
 plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='maroon')
 
 ind = 1
 ax2 = fig.add_subplot(323)
-plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
+plot(fv[kmeans.labels_==ind].T,lw=0.5,color='grey')
 plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='blue')
 
 ind = 2
 ax3 = fig.add_subplot(324)
-plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
+plot(fv[kmeans.labels_==ind].T,lw=0.5,color='grey')
 plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='green')
 
 ind = 3
 ax4 = fig.add_subplot(325)
-plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
+plot(fv[kmeans.labels_==ind].T,lw=0.5,color='grey')
 plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='orange')
 
 ind = 4
 ax5 = fig.add_subplot(326)
-plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
+plot(fv[kmeans.labels_==ind].T,lw=0.5,color='grey')
 plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='purple')
 
 text(-14.5, 14, 'Total Establishments\n k = 5', size=16)
+
+
+
+# create geodataframe of different classes:
+#gdf = gp.GeoDataFrame.from_file('../output/nyc-zip-code-extend.json')
+gdf = gp.GeoDataFrame.from_file('../data/nyc_zipcta/nyc_zipcta.shp')
+
+# dictionary of cluster labels for each zip code
+labels = {}
+for i in range(0, len(zcta)):
+	labels[zcta[i]] = kmeans.labels_[i]
+
+
+# add "clusterLabels" to existing gdf
+labelList = []
+zipList = []
+for i in range(0, len(gdf)):
+#	geozip = int(gdf.loc[i].ZIP)
+	geozip = int(gdf.loc[i].ZCTA5CE00)
+	try:
+		labelList.append(labels[geozip])
+		zipList.append(geozip)
+	except:
+		labelList.append(-1)
+		zipList.append(geozip)
+
+gdf['clusterLabel'] = labelList
+
+#figure()
+#gdf.plot(column='clusterLabel', colormap='Accent')
+
+gdf.to_file('../output/clusterPlots/shapefiles/establishmentsZip.shp')
+
 
 
