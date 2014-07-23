@@ -76,35 +76,57 @@ kmeans = KMeans(init='random', n_clusters=5, n_init=10)
 kmeans.fit(gfv)
 
 # create plots of five classes on one figure:
+xlabels = ['00','02','04','06','08','10','12']
+
 fig = figure()
 
+ax1 = subplot(322)
 ind = 0
-ax1 = fig.add_subplot(322)
-plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
-plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='maroon')
+ax1.set_xticklabels(xlabels)
+ax1.get_yaxis().set_ticks([])
+plt.plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
+plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='red')
+ax1 = subplot(322)
 
+ax2 = subplot(323)
 ind = 1
-ax2 = fig.add_subplot(323)
+ax2.set_xticklabels(xlabels)
+ax2.get_yaxis().set_ticks([])
 plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
-plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='blue')
+plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='cyan')
+ax2 = subplot(323)
 
+ax3 = subplot(324)
 ind = 2
-ax3 = fig.add_subplot(324)
+ax3.set_xticklabels(xlabels)
+ax3.get_yaxis().set_ticks([])
 plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
 plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='green')
+ax3 = subplot(324)
 
+ax4 = subplot(325)
 ind = 3
-ax4 = fig.add_subplot(325)
+ax4.set_xticklabels(xlabels)
+ax4.get_yaxis().set_ticks([])
 plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
 plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='orange')
+ax4 = subplot(325)
 
+ax5 = subplot(326)
 ind = 4
-ax5 = fig.add_subplot(326)
+ax5.set_xticklabels(xlabels)
+ax5.get_yaxis().set_ticks([])
 plot(gfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
-plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='purple')
+plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='#4B088A')
+ax5 = subplot(326)
 
-text(-14.5, 15, 'Total Number of Employees\n k = 5', size=16)
+text(-14.5, 11, 'Total Number of Employees\n k = 5', size=16)
 
+# save plot to pdf:
+from matplotlib.backends.backend_pdf import PdfPages
+pp = PdfPages('employees.pdf')
+plt.savefig(pp, format='pdf')
+pp.close()
 
 # create geodataframe of different classes:
 #gdf = gp.GeoDataFrame.from_file('../output/nyc-zip-code-extend.json')
@@ -114,23 +136,6 @@ gdf = gp.GeoDataFrame.from_file('../data/nyc_zipcta/nyc_zipcta.shp')
 labels = {}
 for i in range(0, len(zcta)):
 	labels[zcta[i]] = kmeans.labels_[i]
-
-# for reference, create a list of zip codes that are not in both
-# kmeans.labels_ and the geodataframe "zips"
-noncommonZips = []
-#fvzips = gdf['ZIP']
-fvzips = gdf['ZCTA5CE00']
-fvzips2 = []
-for entry in fvzips:
-	fvzips2.append(int(entry))
-for entry in fvzips2:
-	if entry not in zcta:
-		if entry not in noncommonZips:
-			noncommonZips.append(entry)
-for entry in zcta:
-	if int(entry) not in fvzips2:
-		if entry not in noncommonZips:
-			noncommonZips.append(entry)
 
 # add "clusterLabels" to existing gdf
 labelList = []
@@ -150,13 +155,65 @@ gdf['clusterLabel'] = labelList
 #figure()
 #gdf.plot(column='clusterLabel', colormap='Accent')
 
+# save gdf to shapefile for qgis
 gdf.to_file('../output/clusterPlots/shapefiles/employeesZip.shp')
 
 
-# sum(kmeans.labels_==0)
-# 0: 29
-# 1: 22
-# 2: 35
-# 3: 61
-# 4: 63
+# SECOND ROUND: K = 2
+kmeans2 = KMeans(init='random', n_clusters=2, n_init=10)
+kmeans2.fit(gfv)
+
+# create plots of both classes on one figure:
+fig = figure()
+
+ax1 = subplot(211)
+ind = 0
+ax1.set_xticklabels(xlabels)
+ax1.get_yaxis().set_ticks([])
+plt.plot(gfv[kmeans2.labels_==ind].T,lw=0.5,color='grey')
+plot(kmeans2.cluster_centers_.T[:,ind],lw=2,color='darkblue')
+title('Total Number of Employees, k = 2', size = 16)
+ax1 = subplot(211)
+
+ax2 = subplot(212)
+ind = 1
+ax2.set_xticklabels(xlabels)
+ax2.get_yaxis().set_ticks([])
+plot(gfv[kmeans2.labels_==ind].T,lw=0.5,color='grey')
+plot(kmeans2.cluster_centers_.T[:,ind],lw=2,color='darkorange')
+ax2 = subplot(212)
+
+# save plot to pdf:
+pp = PdfPages('employees2.pdf')
+plt.savefig(pp, format='pdf')
+pp.close()
+
+# create geodataframe of different classes:
+#gdf = gp.GeoDataFrame.from_file('../output/nyc-zip-code-extend.json')
+gdf2 = gp.GeoDataFrame.from_file('../data/nyc_zipcta/nyc_zipcta.shp')
+
+# dictionary of cluster labels for each zip code
+labels = {}
+for i in range(0, len(zcta)):
+	labels[zcta[i]] = kmeans2.labels_[i]
+
+# add "clusterLabels" to existing gdf
+labelList = []
+zipList = []
+for i in range(0, len(gdf2)):
+	geozip = int(gdf2.loc[i].ZCTA5CE00)
+	try:
+		labelList.append(labels[geozip])
+		zipList.append(geozip)
+	except:
+		labelList.append(-1)
+		zipList.append(geozip)
+
+gdf2['clusterLabel'] = labelList
+
+#figure()
+#gdf.plot(column='clusterLabel', colormap='Accent')
+
+# save gdf to shapefile for qgis
+gdf2.to_file('../output/clusterPlots/shapefiles/employeesK2.shp')
 
