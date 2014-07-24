@@ -38,7 +38,7 @@ def nycep_extend_zip_json(key, value_dic, ofile='nyc-zip-code-extend.json',
 
 if __name__=='__main__':
 
-    # -- read in csv file
+    # -- add in pcnt parks
     lines = [line for line in open('../output/zips_park_pcnt.csv')][1:]
     value_dic = {}
     for line in lines:
@@ -46,3 +46,45 @@ if __name__=='__main__':
         value_dic[tzip] = float(value)
 
     nycep_extend_zip_json('pctpark',value_dic)
+
+
+    # -- add the ZBP and ACS data
+    lines = [line for line in open('../data/featuresForMap.csv')][1:]
+    inc_dic = {}
+    emp_dic = {}
+    pay_dic = {}
+    est_dic = {}
+    sal_dic = {}
+    for line in lines:
+        tzip, inc, emp, pay, est = line.split(',')
+
+        inc = float(inc) if len(inc)>0 else 0.0
+        emp = float(emp) if len(emp)>0 else 0.0
+        pay = float(pay) if len(pay)>0 else 0.0
+        est = float(est) if len(est)>0 else 0.0
+
+        inc_dic[tzip] = inc
+        emp_dic[tzip] = emp
+        pay_dic[tzip] = pay
+        est_dic[tzip] = est
+        sal_dic[tzip] = pay/(emp+(emp==0))
+
+    nycep_extend_zip_json('median_hh_income', inc_dic, 
+                          ofile='nyc-zip-code-extend.json', opath='../output', 
+                          dfile='nyc-zip-code-extend.json', dpath='../output')
+
+    nycep_extend_zip_json('num_employees', emp_dic, 
+                          ofile='nyc-zip-code-extend.json', opath='../output', 
+                          dfile='nyc-zip-code-extend.json', dpath='../output')
+
+    nycep_extend_zip_json('payroll', pay_dic, 
+                          ofile='nyc-zip-code-extend.json', opath='../output', 
+                          dfile='nyc-zip-code-extend.json', dpath='../output')
+
+    nycep_extend_zip_json('num_establishments', est_dic, 
+                          ofile='nyc-zip-code-extend.json', opath='../output', 
+                          dfile='nyc-zip-code-extend.json', dpath='../output')
+
+    nycep_extend_zip_json('salary', sal_dic, 
+                          ofile='nyc-zip-code-extend.json', opath='../output', 
+                          dfile='nyc-zip-code-extend.json', dpath='../output')
