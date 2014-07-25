@@ -85,10 +85,16 @@ for key in sorted(parkPcts):
 for key in sorted(busRatio):
 	yvals.append(busRatio[key])
 
-#plt.scatter(log(xvals), log(yvals), color='black')
-#plt.xlabel('Log of pct of ZIP code covered by parks')
-#plt.ylabel('Log of small:big business ratio (<250 workers)')
-#plt.title('Parks and Small Businesses')
+plt.scatter(np.log10(xvals), yvals, color='black')
+plt.xlim([-3,3])
+plt.xlabel('Log of pct of ZIP code covered by parks')
+plt.ylabel('Ratio of Small to Big Businesses (<250 workers)')
+plt.title('Parks and Small Businesses')
+
+from matplotlib.backends.backend_pdf import PdfPages
+pp = PdfPages('pctVsSmallBusRatio.pdf')
+plt.savefig(pp, format='pdf')
+pp.close()
 
 
 # Annual Payroll
@@ -120,10 +126,14 @@ for key in sorted(parkPcts2):
 for key in sorted(annPayroll):
 	plot2y.append(annPayroll[key])
 
-#plt.scatter(log(plot2x), log(plot2y), color='black')
-#plt.xlabel('Log of pct of ZIP code covered by parks')
-#plt.ylabel('Log of annual payroll ($1000)')
-#plt.title('Parks and Annual Payroll')
+plt.scatter(np.log10(plot2x), np.log10(plot2y), color='black')
+plt.xlabel('Log of pct of ZIP code covered by parks')
+plt.ylabel('Log of Annual Payroll ($1000)')
+plt.title('Parks and Annual Payroll')
+
+pp = PdfPages('pctVsAnnualPayroll.pdf')
+plt.savefig(pp, format='pdf')
+pp.close()
 
 
 # Total employees
@@ -152,10 +162,14 @@ for key in sorted(parkPcts2):
 for key in sorted(marchEmployees):
 	plot3y.append(marchEmployees[key])
 
-#plt.scatter(log(plot3x), log(plot3y), color='black')
-#plt.xlabel('Log of pct of ZIP code covered by parks')
-#plt.ylabel('Log of total Mid-March employees')
-#plt.title('Parks and Total Employees')
+plt.scatter(np.log10(plot3x), plot3y, color='black')
+plt.xlabel('Log of pct of ZIP code covered by parks')
+plt.ylabel('Total Mid-March Employees')
+plt.title('Parks and Total Employees')
+
+pp = PdfPages('pctVsTotalEmployees.pdf')
+plt.savefig(pp, format='pdf')
+pp.close()
 
 
 # Total Number of Establishments
@@ -185,7 +199,11 @@ for key in sorted(parkPcts2):
 for key in sorted(totalEst):
 	plot4y.append(totalEst[key])
 
-plt.scatter(log(plot4x), log(plot4y), color='black')
+plt.scatter(np.log10(plot4x), plot4y, color='black')
 plt.xlabel('Log of pct of ZIP code covered by parks')
-plt.ylabel('Log of total number of establishments')
+plt.ylabel('Total Number of Establishments')
 plt.title('Parks and Total Establishments')
+
+pp = PdfPages('pctVsTotalEstablishments.pdf')
+plt.savefig(pp, format='pdf')
+pp.close()

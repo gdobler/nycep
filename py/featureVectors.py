@@ -1,5 +1,8 @@
 import csv
 import numpy as np
+import geopandas as gp
+from sklearn.cluster import KMeans
+import math
 
 data = {}
 
@@ -37,22 +40,49 @@ for block in data:
 		nFeats += len2
 	break
 
-print nBlocks, nFeats
-
-featVect = np.zeros(shape = (nBlocks, nFeats))
+kfv = np.zeros(shape = (nBlocks, nFeats))
 
 i = 0
 j = 0
 for block in data:
 	for feature in data[block]:
-		featVect[i][j] = feature
+		feature = float(feature)
+		if math.isnan(feature) or math.isinf(feature):
+			print 'hi'
+			kfv[i][j] = 0
+		else:
+			kfv[i][j] = feature
 		j += 1
 		if (j == nFeats):
 			j = 0
 			i += 1
 
+# normalize featVect
+nkfv = kfv
+i = 0
+j = 0
+for line in kfv:
+	mean = np.mean(line)
+	stdev = np.std(line)
+	for feature in line:
+		feature -= mean
+		feature /= stdev
+		if math.isnan(feature):
+			nkfv[i][j] = 0
+		else:
+			nkfv[i][j] = feature
+		j += 1
+	i +=1
+	j = 0
 
-for line in featVect:
-	print line
-	break
+
+
+# generate n clusters
+n = 5
+kmeans = KMeans(init='random', n_clusters = n, n_init = 10)
+kmeans.fit(nkfv)
+
+ind = 0
+plot(nkfv[kmeans.labels_==ind].T,lw=0.5,color='grey')
+plot(kmeans.cluster_centers_.T[:,ind],lw=2,color='maroon')
 
