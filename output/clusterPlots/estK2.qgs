@@ -44,7 +44,7 @@
         </legendlayer>
     </legend>
     <projectlayers layercount="1">
-        <maplayer minimumScale="-4.65661e-10" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+        <maplayer minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
             <id>estK220140722232112069</id>
             <datasource>./shapefiles/estK2.shp</datasource>
             <title></title>
@@ -109,7 +109,7 @@
                         <layer pass="0" class="SimpleFill" locked="0">
                             <prop k="border_width_map_unit_scale" v="0,0"/>
                             <prop k="border_width_unit" v="MM"/>
-                            <prop k="color" v="236,232,220,255"/>
+                            <prop k="color" v="242,152,8,255"/>
                             <prop k="color_border" v="0,0,0,255"/>
                             <prop k="joinstyle" v="bevel"/>
                             <prop k="offset" v="0,0"/>
@@ -117,7 +117,7 @@
                             <prop k="offset_unit" v="MM"/>
                             <prop k="style" v="solid"/>
                             <prop k="style_border" v="solid"/>
-                            <prop k="width_border" v="0.5"/>
+                            <prop k="width_border" v="0.26"/>
                         </layer>
                     </symbol>
                 </symbols>
@@ -138,8 +138,6 @@
                         </layer>
                     </symbol>
                 </source-symbol>
-                <colorramp type="randomcolors" name="[source]"/>
-                <invertedcolorramp value="0"/>
                 <rotation/>
                 <sizescale scalemethod="area"/>
             </renderer-v2>
@@ -328,10 +326,10 @@
                     <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
                 </edittype>
             </edittypes>
-            <editform></editform>
+            <editform>.</editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform></annotationform>
+            <annotationform>.</annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
