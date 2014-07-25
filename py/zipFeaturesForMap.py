@@ -13,6 +13,8 @@ with open("../data/medianHHincomeZCTA.csv") as f:
 	for line in lines:
 		zipcode = line[1]
 		hhinc = line[3]
+		if hhinc == '':
+			hhinc = 0
 		data[zipcode] = [hhinc]
 
 #i = 0
@@ -46,9 +48,41 @@ addYear('../output/zbp/12totals.txt', data, 8) # annual payroll
 addYear('../output/zbp/12totals.txt', data, 9) # total establishments
 
 
+with open("../output/parkQualityByZip.csv", "rU") as f:
+	lines = csv.reader(f, delimiter = ",")
+	for line in lines:
+		zipcode = line[0]
+		parkquality = line[1]
+		try:
+			data[zipcode].append(parkquality)
+		except:
+			continue
+
+for entry in data:
+	if len(data[entry]) == 4:
+		data[entry].append(-1)
+
 w = open('../data/featuresForMap.csv', 'wb')
 wr = csv.writer(w, delimiter = ',')
-wr.writerow(['zipcode', 'medianhhincome', 'employees', 'payroll', 'establishments'])
+wr.writerow(['zipcode', 'medianhhincome', 'employees', 'payroll', 'establishments', 'avgParkQuality'])
 for entry in data:
-	fields = [entry, data[entry][0], data[entry][1], data[entry][2], data[entry][3]]
+	fields = [entry, data[entry][0], data[entry][1], data[entry][2], data[entry][3], data[entry][4]]
 	wr.writerow(fields)
+
+
+# plot quality v income:
+import matplotlib.pyplot as plt
+
+for entry in data:
+	plt.scatter(data[entry][0], data[entry][4], color = 'k')
+
+plt.ylim([-.25,1.25])
+plt.xlabel("Median HH Income")
+plt.ylabel("Area-Weighted Average Park Quality")
+plt.title("Income and Park Quality")
+
+
+from matplotlib.backends.backend_pdf import PdfPages
+pp = PdfPages('qualityvsincome.pdf')
+plt.savefig(pp, format='pdf')
+pp.close()

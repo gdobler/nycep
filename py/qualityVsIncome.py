@@ -22,8 +22,11 @@ with open("../output/trinaryScore.csv", 'rU') as f:
 	rows = csv.reader(f, delimiter = ",")
 	for row in rows:
 		parkId = row[0]
-		score = row[1]
-		pq[parkId] = score
+		score = float(row[1])
+		if score == -1:
+			continue
+		else:
+			pq[parkId] = score
 
 pa = {}
 
@@ -43,17 +46,22 @@ for row in pz:
 	for park in pz[row]:
 		#print row, park
 		try:
-			area = float(pa[park])
-			areasum += area
-			quality = float(pq[park])
-			num += (quality*area)
+			pa[park]
+			pq[park]
 		except:
 			continue
-	quality = num/areasum
+		area = float(pa[park])
+		areasum += area
+		quality = float(pq[park])
+		#print area, quality
+		num += (area*quality)
+	quality = num/(areasum+1*(areasum==0))
 	avgQual[row] = quality
 
 with open("../output/parkQualityByZip.csv", 'wb') as w:
 	wr = csv.writer(w, delimiter = ",")
 	for zipcode in avgQual:
 		wr.writerow([zipcode, avgQual[zipcode]])
+
+
 
