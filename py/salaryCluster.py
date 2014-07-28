@@ -198,3 +198,61 @@ gdf['clusterLabel'] = labelList
 gdf.to_file('../output/clusterPlots/shapefiles/salaryK5.shp')
 
 
+# SECOND ROUND: K = 2
+kmeans2 = KMeans(init='random', n_clusters=2, n_init=10)
+kmeans2.fit(fv)
+
+# create plots of both classes on one figure:
+fig = figure()
+
+ax1 = subplot(211)
+ind = 0
+ax1.set_xticklabels(xlabels)
+ax1.get_yaxis().set_ticks([])
+plt.plot(fv[kmeans2.labels_==ind].T,lw=0.5,color='grey')
+plot(kmeans2.cluster_centers_.T[:,ind],lw=2,color='darkblue')
+title('Average Salary, k = 2', size = 16)
+ax1 = subplot(211)
+
+ax2 = subplot(212)
+ind = 1
+ax2.set_xticklabels(xlabels)
+ax2.get_yaxis().set_ticks([])
+plot(fv[kmeans2.labels_==ind].T,lw=0.5,color='grey')
+plot(kmeans2.cluster_centers_.T[:,ind],lw=2,color='darkorange')
+ax2 = subplot(212)
+
+# save plot to pdf:
+pp = PdfPages('salaryK2.pdf')
+plt.savefig(pp, format='pdf')
+pp.close()
+
+# create geodataframe of different classes:
+#gdf = gp.GeoDataFrame.from_file('../output/nyc-zip-code-extend.json')
+gdf2 = gp.GeoDataFrame.from_file('../data/nyc_zipcta/nyc_zipcta.shp')
+
+# dictionary of cluster labels for each zip code
+labels = {}
+for i in range(0, len(zcta)):
+	labels[zcta[i]] = kmeans2.labels_[i]
+
+# add "clusterLabels" to existing gdf
+labelList = []
+zipList = []
+for i in range(0, len(gdf2)):
+	geozip = int(gdf2.loc[i].ZCTA5CE00)
+	try:
+		labelList.append(labels[geozip])
+		zipList.append(geozip)
+	except:
+		labelList.append(-1)
+		zipList.append(geozip)
+
+gdf2['clusterLabel'] = labelList
+
+#figure()
+#gdf.plot(column='clusterLabel', colormap='Accent')
+
+# save gdf to shapefile for qgis
+gdf2.to_file('../output/clusterPlots/shapefiles/salaryK2.shp')
+

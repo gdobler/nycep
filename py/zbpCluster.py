@@ -169,7 +169,7 @@ fig = figure()
 ax1 = subplot(211)
 ind = 0
 ax1.set_xticklabels(xlabels)
-ax1.get_yaxis().set_ticks([])
+#ax1.get_yaxis().set_ticks([])
 plt.plot(gfv[kmeans2.labels_==ind].T,lw=0.5,color='grey')
 plot(kmeans2.cluster_centers_.T[:,ind],lw=2,color='darkblue')
 title('Total Number of Employees, k = 2', size = 16)
