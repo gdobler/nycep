@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/queue.v1.min.js"></script>
+ 
+<style>
+.stroke {
+  fill: none;
+  stroke: #000;
+  stroke-width: .5px;
+}
+</style>
+</head>
+ 
+<body>
+    <script>
+        var width=960, height=500;
+		var svg = d3.select("body").append("svg")
+		.attr("width", width)
+		.attr("height", height);
+		var q = 0;
+		var sc = 3000;
+		var d3line2 = d3.svg.line()
+                        .x(function(d){q= 0.7559*sc*(d[0]+74.1);  return q;})
+                        .y(function(d){q= sc*(-1*d[1]+40.92);  return q;})
+                        .interpolate("linear"); 
+		
+		d3.json("/nyczip-topo.json", function(d){
+			for(var k = 0; k < d.data.length; k++){
+				svg.append("path")
+				.attr("d", d3line2(d.data[k][9][5].rings[0]) )
+				.attr("class", "stroke");
+			}
+		});
+    </script>
+</body>
+</html>
