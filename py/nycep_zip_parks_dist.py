@@ -44,7 +44,7 @@ def nycep_zip_parks_dist(bur,allparks=False):
 
 
     # -- get array of minimum distances for zipcodes
-    zips    = [i for i in set(pl['ZipCode'])]
+    zips    = [i for i in set(pl['ZipCode']) if not np.isnan(i)]
     zip_dic = {}
 
     for ii,izip in enumerate(zips):
