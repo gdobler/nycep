@@ -245,8 +245,7 @@ function mouseover(d){
         '<br>'+'Median Household Income: $'+d.properties["median_hh_income"]+
         '<br>'+'Number of Establishments: '+d.properties["num_establishments"]+
         '<br>'+'Average Salary: $'+(d.properties["salary"]*1000).toFixed(2)+
-        '<br>'+'Average Distance: '+d.properties["mean_distance"].toFixed(2)+
-        ' ft';
+        '<br>'+'Average Distance to Nearest Park: '+(Math.round(d.properties["mean_distance"]/10)*10)+' ft';
 	// you can add any more information to the mouseover
 	// here, using data in your JSON
 	$(".mouseover").html(text);
