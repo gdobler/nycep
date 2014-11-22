@@ -1,0 +1,78 @@
+# ---------------------------------------------------------------------------
+# Split_Parks.py
+# Created on: 10/14/2014
+# Usage: Split Parks by Geographic Area and Calculate % Area that is Park Space
+# Description: Tool to split parks by different geographic boundaries, calculate the % of the geographic area that is convered by park space.
+#               Paramaters include: Geographic Area (Eg. Census Tract), Expression (calculate Unique ID for Geographic Area), Split Item (Eg Parks), Workspace (.gdb)
+# ---------------------------------------------------------------------------
+
+# Set the necessary product code
+# import arcinfo
+
+# Import arcpy module
+import arcpy
+from arcpy import env
+
+# Script Paramaters
+Geographic_Area = arcpy.GetParameterAsText(0)
+if Geographic_Area == '#' or not Geographic_Area:
+    Geographic_Area = "C:\\NYU\\GRA\\Data\\Raw\\New_York_City.gdb\\Zip_Codes" # provide a default value if unspecified
+
+Expression = arcpy.GetParameterAsText(1)
+if Expression == '#' or not Expression:
+    Expression = "\"U\" & [ZCTA5CE10]" # provide a default value if unspecified
+
+Parks_GreenSpace = arcpy.GetParameterAsText(2)
+if Parks_GreenSpace == '#' or not Parks_GreenSpace:
+    Parks_GreenSpace = "C:\\NYU\\GRA\\Data\\Raw\\New_York_City.gdb\\Parks_GreenSpace" # provide a default value if unspecified
+
+Split_gdb = arcpy.GetParameterAsText(3)
+if Split_gdb == '#' or not Split_gdb:
+    Split_gdb = "C:\\NYU\\GRA\\Data\\Split.gdb" # provide a default value if unspecified
+
+OutParksSum = arcpy.GetParameterAsText(4)
+if OutParksSum == '#' or not OutParksSum:
+    OutParksSum = "C:\\NYU\\GRA\\Data\\Split.gdb\\ParksOutSum" # provide a default value if unspecified
+
+CaseField = arcpy.GetParameterAsText(5)
+if CaseField == '#' or not CaseField:
+    CaseField = "[ZCTA5CE10]" # provide a default value if unspecified
+
+# Local variables:
+Zip_Codes = Geographic_Area
+Output_Feature_Class__3_ = Zip_Codes
+Zip_Codes__2_ = Output_Feature_Class__3_
+Split_gdb = Zip_Codes__2_
+
+# Process: Add Geometry Attributes to Geographic Area
+arcpy.AddGeometryAttributes_management(Geographic_Area, "AREA_GEODESIC", "", "ACRES", "PROJCS['NAD_1983_StatePlane_New_York_Long_Island_FIPS_3104_Feet',GEOGCS['GCS_North_American_1983',DATUM['D_North_American_1983',SPHEROID['GRS_1980',6378137.0,298.257222101]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Lambert_Conformal_Conic'],PARAMETER['False_Easting',984250.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',-74.0],PARAMETER['Standard_Parallel_1',40.66666666666666],PARAMETER['Standard_Parallel_2',41.03333333333333],PARAMETER['Latitude_Of_Origin',40.16666666666666],UNIT['Foot_US',0.3048006096012192]],VERTCS['NAVD_1988',VDATUM['North_American_Vertical_Datum_1988'],PARAMETER['Vertical_Shift',0.0],PARAMETER['Direction',1.0],UNIT['Foot_US',0.3048006096012192]]")
+
+# Process: Add Field
+arcpy.AddField_management(Zip_Codes, "Unique_ID", "TEXT", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+
+# Process: Calculate Field
+arcpy.CalculateField_management(Zip_Codes, "Unique_ID", "\"U\" & [ZCTA5CE10]", "VB")
+
+# Process: Split
+arcpy.Split_analysis(Parks_GreenSpace, Zip_Codes, "Unique_ID", Split_gdb, "")
+
+#Merge Parks
+env.workspace = Split_gdb
+fcList = arcpy.ListFeatureClasses('','')
+Parks_Split_Merged = arcpy.Merge_management(fcList, "Merge")
+
+# Process: Add Geometry Attributes to Parks
+arcpy.AddGeometryAttributes_management(Parks_Split_Merged, "AREA_GEODESIC", "", "ACRES", "PROJCS['NAD_1983_StatePlane_New_York_Long_Island_FIPS_3104_Feet',GEOGCS['GCS_North_American_1983',DATUM['D_North_American_1983',SPHEROID['GRS_1980',6378137.0,298.257222101]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Lambert_Conformal_Conic'],PARAMETER['False_Easting',984250.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',-74.0],PARAMETER['Standard_Parallel_1',40.66666666666666],PARAMETER['Standard_Parallel_2',41.03333333333333],PARAMETER['Latitude_Of_Origin',40.16666666666666],UNIT['Foot_US',0.3048006096012192]],VERTCS['NAVD_1988',VDATUM['North_American_Vertical_Datum_1988'],PARAMETER['Vertical_Shift',0.0],PARAMETER['Direction',1.0],UNIT['Foot_US',0.3048006096012192]]")
+
+#Sum area of parks by Geographic Area
+arcpy.Statistics_analysis(Parks_Split_Merged, OutParksSum, [["AREA_GEO", "SUM"]], "Unique_ID")
+
+#Join Parks to Geograpic Area
+AddJoin_management (OutParksSum, "Unique_ID", Geographic_Area, "Unique_ID", {KEEP_ALL})
+#Export Joined to Feature Class
+FeatureClassToFeatureClass_conversion (OutParksSum, Split_gdb, ParksSumJoined)
+# Process: Add Field
+arcpy.AddField_management(ParksSumJoined, "Per_Area_Parks", "DOUBLE", "", "", "", "", "NULLABLE", "NON_REQUIRED", "")
+
+# Process: Calculate Field
+arcpy.CalculateField_management(ParksSumJoined, "Per_Area_Parks", (("AREA_GEO"/"AREA_GEO")*100), "VB", "")
